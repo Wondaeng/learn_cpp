@@ -24,13 +24,16 @@ int main() {
 	        printf("wrong\n");
 	        continue;
 	    }
-	    
+
+		/* calculate the sum of squares of the other two sides*/
 	    int sum_of_square = 0;
 	    for (int i = 0; i < 3; i++) {
 	        if (i != max_index) {
 	            sum_of_square += side_arr[i] * side_arr[i];	            
 	        }
 	    }
+
+		/* check for Pythagorean theorem */
 	    if (sum_of_square == (side_arr[max_index] * side_arr[max_index])){
 	        printf("right\n");
 	    } else {
