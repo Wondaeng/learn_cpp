@@ -35,12 +35,140 @@ int n = 0;  /* number of people in phonebook */
 
 char delim[] = " ";
 
-int main() {
 
-	init_directory();  /* 이 함수에서 배열 names와 numbers를 생성*/
-	process_command();  /* 사용자의 명령을 처리하는 함수를 별개로 정의 */
+void reallocate() {
+	int i;
 
-	return 0;
+	capacity *= 2;
+	char** tmp1 = (char**)malloc(capacity * sizeof(char*));
+	char** tmp2 = (char**)malloc(capacity * sizeof(char*));
+
+	for (i = 0; i < n; i++) {
+		tmp1[i] = names[i];
+		tmp2[i] = numbers[i];
+	}
+
+	free(names);
+	free(numbers);
+
+	names = tmp1;
+	numbers = tmp2;
+}
+
+
+void add(char* name, char* number) {
+	if (n >= capacity) {
+		reallocate();
+	}
+
+	int i = n - 1;
+	while (i >= 0 && strcmp(names[i], name) > 0) {
+		names[i + 1] = names[i];
+		numbers[i + 1] = numbers[i];
+		i--;
+	}
+
+	names[i + 1] = _strdup(name);
+	numbers[i + 1] = _strdup(name);
+	n++;
+}
+
+
+void load(char* file_name) {
+	char buf1[BUFFER_SIZE];
+	char buf2[BUFFER_SIZE];
+
+	FILE* fp = fopen(file_name, "r");
+	if (fp == NULL) {
+		printf("Open failed.\n");
+		return;
+	}
+
+	while ((fscanf(fp, "%s", buf1) != EOF)) {
+		fscanf(fp, "%s", buf2);
+		add(buf1, buf2);
+	}
+
+	fclose(fp);
+}
+
+
+int search(char* name) {
+	int i;
+	for (i = 0; i < n; i++) {
+		if (strcmp(name, names[i]) == 0) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+
+void status() {
+	int i;
+	for (i = 0; i < n; i++) {
+		printf("%s %s\n", names[i], numbers[i]);
+	}
+	printf("Total %d persons.\n", n);
+}
+
+
+void find(char* name) {
+	int index = search(name);
+	if (index == -1) {
+		printf("No person named '%s' exists.\n", name);
+	}
+	else {
+		printf("%s\n", numbers[index]);
+	}
+}
+
+
+void remove_person(char* name) {
+	int i = search(name);
+	if (i == -1) {
+		printf("No person named '%s' exists.\n", name);
+		return;
+	}
+
+	int j = i;
+	for (; j < n - 1; j++) {
+		names[j] = names[j + 1];
+		numbers[j] = numbers[j + 1];
+	}
+	n--;
+	printf("'%s' was deleted successfully.\n", name);
+}
+
+
+void save(char* file_name) {
+	int i;
+	FILE* fp = fopen(file_name, "w");
+	if (fp == NULL) {
+		printf("Open failed.\n");
+		return;
+	}
+
+	for (i = 0; i < n; i++) {
+		fprintf(fp, "%s %s\n", names[i], numbers[i]);
+	}
+
+	fclose(fp);
+}
+
+
+int read_line(char str[], int limit) {
+	int ch, i = 0;
+	/* TO DO: getchar()가 입력 버퍼에서 어떻게 읽는지 공부하기*/
+	while ((ch = getchar()) != '\n') {
+		if (i < limit - 1) {
+			str[i++] = ch;
+		}
+	}
+
+	str[i] = '\0';
+
+	return i;
 }
 
 
@@ -106,143 +234,16 @@ void process_command() {
 				printf("Invalid arguments.\n");
 				continue;
 			}
-			remove(argument1);
+			remove_person(argument1);
 		}
 	}
 }
 
 
-void load(char* file_name) {
-	char buf1[BUFFER_SIZE];
-	char buf2[BUFFER_SIZE];
+int main() {
 
-	FILE* fp = fopen(file_name, "r");
-	if (fp == NULL) {
-		printf("Open failed.\n");
-		return;
-	}
+	init_directory();  /* 이 함수에서 배열 names와 numbers를 생성*/
+	process_command();  /* 사용자의 명령을 처리하는 함수를 별개로 정의 */
 
-	while ((fscanf(fp, "%s", buf1) != EOF)) {
-		fscanf(fp, "%s", buf2);
-		add(buf1, buf2);
-	}
-
-	fclose(fp);
-}
-
-
-void add(char* name, char* number) {
-	if (n >= capacity) {
-		reallocate();
-	}
-
-	int i = n - 1;
-	while (i >= 0 && strcmp(names[i], name) > 0) {
-		names[i + 1] = names[i];
-		numbers[i + 1] = numbers[i];
-		i--;
-	}
-
-	names[i + 1] = _strdup(name);
-	numbers[i + 1] = _strdup(name);
-	n++;
-}
-
-
-void status() {
-	int i;
-	for (i = 0; i < n; i++) {
-		printf("%s %s\n", names[i], numbers[i]);
-	}
-	printf("Total %d persons.\n", n);
-}
-
-
-void find(char* name) {
-	int index = search(name);
-	if (index == -1) {
-		printf("No person named '%s' exists.\n", name);
-	}
-	else {
-		printf("%s\n", numbers[index]);
-	}
-}
-
-
-int search(char* name) {
-	int i;
-	for (i = 0; i < n; i++) {
-		if (strcmp(name, names[i]) == 0) {
-			return i;
-		}
-	}
-	return -1;
-}
-
-
-void remove(char* name) {
-	int i = search(name);
-	if (i == -1) {
-		printf("No person named '%s' exists.\n", name);
-		return;
-	}
-
-	int j = i;
-	for (; j < n - 1; j++) {
-		names[j] = names[j + 1];
-		numbers[j] = numbers[j + 1];
-	}
-	n--;
-	printf("'%s' was deleted successfully.\n", name);
-}
-
-
-void save(char* file_name) {
-	int i;
-	FILE* fp = fopen(file_name, "w");
-	if (fp == NULL) {
-		printf("Open failed.\n");
-		return;
-	}
-
-	for (i = 0; i < n; i++) {
-		fprintf(fp, "%s %s\n", names[i], numbers[i]);
-	}
-
-	fclose(fp);
-}
-
-
-int read_line(char str[], int limit) {
-	int ch, i = 0;
-	/* TO DO: getchar()가 입력 버퍼에서 어떻게 읽는지 공부하기*/
-	while ((ch = getchar()) != '\n') {
-		if (i < limit - 1) {
-			str[i++] = ch;
-		}
-	}
-
-	str[i] = '\0';
-
-	return i;
-}
-
-
-void reallocate() {
-	int i;
-
-	capacity *= 2;
-	char** tmp1 = (char**)malloc(capacity * sizeof(char*));
-	char** tmp2 = (char**)malloc(capacity * sizeof(char*));
-
-	for (i = 0; i < n; i++) {
-		tmp1[i] = names[i];
-		tmp2[i] = numbers[i];
-	}
-
-	free(names);
-	free(numbers);
-
-	names = tmp1;
-	numbers = tmp2;
+	return 0;
 }
