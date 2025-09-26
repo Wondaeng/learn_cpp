@@ -2,7 +2,9 @@
 #include <string.h>
 
 int main() {
-
+    /*
+    char str[] vs char* str --> 후자는 string literal이 됨
+    */
     char str[] = "now # is the time # to start preparing ### for the exam#";
     char delim[] = "#";
     char* token;
