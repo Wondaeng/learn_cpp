@@ -78,4 +78,87 @@ C 프로그램 구성요소:
 2. 타입 정의 (struct)
 3. 변수
 4. 함수
+
+해결책: 각각의 소스파일마다 헤더(header)파일을 만든다. 
+헤더파일에 함수의 프로토타입을 정의하면 다른 소스파일에서도 #include로 사용할 수 있음.
+#include는 해당 헤더파일을 완전히 복사하여 그 자리에 대입하는 것임 (preprocessing 단계에서)
+따라서 컴파일러는 프로토타입이 정의되어있으므로, 컴파일시 불만이 없음.
+(다만 실제 해당 함수의 위치를 찾아 연결, 호출하는 것은 linker가 하는 일임.)
+
+e.g.:
+<library.c>
+#include "library.h"
+
+void add_song() { ... }
+void find_song() { ... }
+int remove_song() { ... }
+...
+
+
+<library.h>
+#define MAX 100
+typedef struct song Song;
+struct song {
+    ...
+};
+
+void add_song();
+void find_song();
+int remove_song();
+
+
+<main.c>
+#include "library.h"
+
+void process_command()
+{
+    ...
+    add_song(arg1, ...);
+    ...
+}
+
+1. 매크로, 타입정의 공유: 그대로 헤더파일에 넣는다
+2. 함수 공유: 헤더파일에는 prototype을 넣고, 실제 구현은 소스파일에 넣는다.
+3. 변수 공유:
+* 변수의 선언(declaration)과 정의(definition)의 구분:
+- 선언: 컴파일러에게 변수의 존재를 알려 줌
+- 정의: 실제로 메모리 할당
+
+* 변수는 여러번 선언될 수 있다. 하지만, 정의는 한번만 해야한다.
+
+* 선언과 정의를 동시에 하는 방법: int i;
+
+* extern 키워드를 사용하여 변수를 정의하지 않고 선언만 할 수 있음. 즉, 컴파일러에게 변수 i와 배열 a가 다른 파일에 정의되어있음을 알려주는 역할
+extern int i;
+extern int a[];
+
+--> 
+- 공유 변수의 선언은 헤더파일에 둔다.
+- 공유 변수를 사용하는 모든 소스 파일은 헤더파일을 include한다.
+- 소스 파일 중 오직 한 곳에서 공유 변수를 정의한다.
+
+e.g.:
+<file.h>
+extern int global_variable;  // declaration of the variable
+
+<file1.c>
+#include "file.h"
+
+int global_variable;  // definition of the variable
+...
+printf("%d\n", global_variable++);  // use of the variable
+
+<file2.c>
+#include "file.h"
+...
+printf("%d\n", global_variable++);
+
+C프로그래밍에서 변수의 공유는 가능하면 안하는 것이 좋다
+
+
+중복된 헤더파일 --> 매크로 정의, 함수 프로토타입, 외부(extern) 변수 선언은 중복되어도 상관없다.
+하지만, 타입 정의가 중복되는 것은 컴파일러 오류를 발생시킨다. 
+
+중복 방지 --> #ifndef - #endif 지시어 사용
+
 */
