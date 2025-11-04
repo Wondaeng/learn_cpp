@@ -59,7 +59,7 @@ char* read_line(const int fd, char* buffer, char** backup, size_t buffer_size) {
 
     // EOF 처리 (\n 없이 끝났을 경우)
     if (*temp != '\0') {  // temp가 비어있지 않다면
-        return temp;  // 마지막 줄 반환
+        return temp;  // 마지막 줄 반환 --> while 루프 안에서 line을 반환하는 것과 동일함. 따라서 호출자가 사용이 끝나면 책임지고 free 해줘야함
     }
 
     free(temp);
@@ -104,5 +104,6 @@ get_next_line:
 fd의 파일을 BUFF_SIZE만큼 계속 읽다가 1) 한줄이 완성 되거나 2) EOF에 도달하면 함수가 끝나고
 주어진 문자열의 포인터가 가르키던 주소값을 바꿈 (즉, 다른 문자열을 가르키게 바꿈)
 --> MQ2. 여기서 그럼 기존에 있던 문자열은 어떻게 되는건가? char* 가 어떤식으로 이 함수에 주어지는 건지 잘 모르겠음
+
 
 */
