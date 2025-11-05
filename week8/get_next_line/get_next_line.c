@@ -20,6 +20,7 @@ VLA 사용을 피하려 하다보니 buffer를 함수 밖에서 만들고 그 �
 char* read_line(const int fd, char* buffer, char** backup, size_t buffer_size) {
     char* temp = strdup("");
 
+    // 주어진 fd에 대해 첫 호출이 아닌 경우, backup은 이전 호출에서 남아있는 문자열을 가르키고있는 포인터
     if (*backup != NULL) {
         temp = strjoin(*backup, temp);  // backup 내용 이어붙이기
         free(*backup);
@@ -39,7 +40,9 @@ char* read_line(const int fd, char* buffer, char** backup, size_t buffer_size) {
         char* newline_ptr = strchr(temp, '\n');
         if (newline_ptr) {  // if newly added string contains '\n'
             // put strings before '\n' to line (which will be returned)
-            size_t len_line = (size_t)(newline_ptr - temp);
+            // 포인터 뺄셈은 ptrdiff_t 자료형. signed이기 때문에 unsigned인 size_t로 캐스팅 시 주의 요함. 
+            // newline_ptr은 temp 문자열 내의 '\n'의 주소, temp는 문자열의 시작 주소 --> 둘의 차이가 곧 \n 이전의 문자의 개수
+            size_t len_line = (size_t)(newline_ptr - temp);  
             char* line = malloc(len_line + 1);
             strncpy(line, temp, len_line);
             line[len_line] = '\0';
@@ -57,11 +60,12 @@ char* read_line(const int fd, char* buffer, char** backup, size_t buffer_size) {
         return NULL;
     }
 
-    // EOF 처리 (\n 없이 끝났을 경우)
+    // EOF case 1: EOF까지 문자열은 남아있으나 '\n'은 없을 때 
     if (*temp != '\0') {  // temp가 비어있지 않다면
         return temp;  // 마지막 줄 반환 --> while 루프 안에서 line을 반환하는 것과 동일함. 따라서 호출자가 사용이 끝나면 책임지고 free 해줘야함
     }
 
+    // EOF case 2: 읽을 문자열이 아예 남아있지 않을 때 (EOF만 남았을 때)
     free(temp);
     return NULL; 
 }
@@ -107,3 +111,4 @@ fd의 파일을 BUFF_SIZE만큼 계속 읽다가 1) 한줄이 완성 되거나 2
 
 
 */
+
