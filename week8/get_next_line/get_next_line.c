@@ -54,8 +54,9 @@ char* read_line(const int fd, char* buffer, char** backup, size_t buffer_size) {
             return line;
         }
     }
-    
-    if (bytes == -1) {        /* read 에러 */
+
+    // read 에러 (MQ3. 이 경우 backup은 어떻게 처리해줘야 하지?)
+    if (bytes == -1) {        
         free(temp);
         return NULL;
     }
@@ -111,4 +112,5 @@ fd의 파일을 BUFF_SIZE만큼 계속 읽다가 1) 한줄이 완성 되거나 2
 
 
 */
+
 
