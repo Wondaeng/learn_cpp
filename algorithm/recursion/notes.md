@@ -21,6 +21,7 @@
   - 모든 case는 결국 base case로 수렴해야 함 (조건 2)
 
 2. 암시적(implicit) 매개변수를 **명시적(explicit) 매개변수**로 바꾸어라.
+   
    [(예제 1) 순차 탐색](https://github.com/Wondaeng/learn_cpp/blob/main/algorithm/recursion/sequential_search.c):
    반복문 버전 함수의 역할은 인덱스 범위 $[0, n-1]$ 사이에서 target을 검사하는 것.
    이 때, 끝 인덱스 $n-1$는 함수 파라미터 $n$에 의해 **명시적**으로 표현 되어 있음.
