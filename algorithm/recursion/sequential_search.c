@@ -16,7 +16,7 @@ int search2(int data[], int begin, int end, int target) {
     if (begin > end) {
         return -1;
     }
-    else if (target == items[begin]) {
+    else if (target == data[begin]) {
         return begin;
     }
     else {
