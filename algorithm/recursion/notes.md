@@ -1,4 +1,4 @@
-##Recursion vs. Iteration
+## Recursion vs. Iteration
 
 - 모든 순환함수는 반복문(iteration)으로 변경 가능
 - 그 역도 성립함. 즉, **모든 반복문은 recursion으로 표현 가능함**
