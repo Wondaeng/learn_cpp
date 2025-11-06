@@ -23,3 +23,17 @@ int search2(int data[], int begin, int end, int target) {
         return search2(data, begin + 1, end, target);
     }
 }
+
+
+// recursive version
+int search3(int data[], int begin, int end, int target) {
+    if (begin > end) {
+        return -1;
+    }
+    else if (target == data[begin]) {
+        return begin;
+    }
+    else {
+        return search3(data, begin, end - 1, target);
+    }
+}
