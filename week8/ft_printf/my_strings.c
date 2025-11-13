@@ -1,6 +1,8 @@
-﻿#include <stdlib.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
+#include <stdint.h>
+
 #include "my_strings.h"
 
 #define ASSERT(expr) assert(expr)
@@ -90,8 +92,23 @@ char* strncpy(char* dest, const char* src, size_t n) {
 }
 
 
-/*
-찾아볼 내용:
-- 1의보수 2의보수
-- int <-> char 형변환
-*/
+char* ptr_to_hex(void* ptr) {
+    ASSERT(ptr != NULL);
+
+    uintptr_t intptr = (uintptr_t)ptr;
+    char* hex_str = (char*)malloc(19);
+
+    int counter = 18;
+    hex_str[counter--] = '\0';
+
+    while (intptr > 0) {  // 비어있는 자리를 0으로 채워야 하는가?
+        char remainder = "0123456789abcdef"[intptr % 16];
+        intptr = intptr / 16;
+        hex_str[counter--] = remainder;
+    }
+
+    hex_str[counter--] = 'x';
+    hex_str[counter--] = '0';
+    
+    return &hex_str[counter + 1];  // 근데 이러면 나중에 malloc free를 못하는데? 다시 생각해보기
+}
