@@ -7,5 +7,6 @@ char* strdup(char* str);
 char* strjoin(char* str1, char* str2);
 char* strchr(const char*, int c);
 char* strncpy(char* dest, const char* src, size_t n);
+char* ptr_to_hex(void* ptr);
 
 #endif
