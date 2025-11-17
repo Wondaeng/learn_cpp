@@ -1,12 +1,14 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <assert.h>
+#include <limits.h>
 #include <stdint.h>
+#include <stdio.h>
 
 #include "my_strings.h"
 
 #define ASSERT(expr) assert(expr)
+#define LOG10_2 0.30102999566
+#define INT_MIN -2147483648
 
+static void reverse(char* s);
 
 size_t strlen(char* str) {
     ASSERT(str != NULL);
@@ -111,4 +113,97 @@ char* ptr_to_hex(void* ptr) {
     hex_str[counter--] = '0';
     
     return &hex_str[counter + 1];  // 근데 이러면 나중에 malloc free를 못하는데? 다시 생각해보기
+}
+
+
+char* int_to_str(int number) {
+    int num_bits = sizeof(int) * CHAR_BIT;
+    int max_digits = (int)((num_bits - 1) * LOG10_2) + 1;  // 공식: num_bits * log10_2 + 1 (부호 비트 제외)
+    
+    char* buf = NULL;  // 예외 처리가 끝난 뒤에 malloc 할 예정
+
+    if (number == 0) {
+        buf = strdup("0");
+        return buf;
+    }
+
+    if (number == INT_MIN) {
+        buf = strdup("-2147483648");
+        return buf;
+    }
+
+    int is_negative = 0;
+    if (number < 0) {
+        is_negative = 1;
+    }
+
+    buf = malloc(max_digits + 2);  // 널문자 +1, 부호 + 1
+    number = abs(number);
+
+    int counter = 0;
+    while (number != 0) {
+        int remainder = number % 10;
+        number /= 10;
+        buf[counter] = remainder + '0';
+        counter++;
+    }
+    
+    if (is_negative) {
+        buf[counter] = '-';
+        buf[counter + 1] = '\0';
+    }
+    else {
+        buf[counter] = '\0';
+    }
+
+    reverse(buf);
+    return buf;
+}
+
+
+char* uint_to_str(unsigned int number) {
+    int num_bits = sizeof(unsigned int) * CHAR_BIT;
+    int max_digits = (int)(num_bits * LOG10_2) + 1;  // 공식: num_bits * log10_2 + 1
+
+    char* buf = NULL;  // 예외 처리가 끝난 뒤에 malloc 할 예정
+
+    if (number == 0) {
+        buf = strdup("0");
+        return buf;
+    }
+
+    buf = malloc(max_digits + 1);  // 널문자 +1
+
+    int counter = 0;
+    while (number != 0) {
+        int remainder = number % 10;
+        number /= 10;
+        buf[counter] = remainder + '0';
+        counter++;
+    }
+
+    buf[counter] = '\0';
+
+    reverse(buf);
+    return buf;
+}
+
+
+static void reverse(char* s) {
+    int left = 0;
+    int right = 0;
+    
+    while (s[right] != '\0') {
+        right++;
+    }
+    right--;
+
+    while (left < right) {
+        char temp = s[left];
+        s[left] = s[right];
+        s[right] = temp;
+        
+        left++;
+        right--;
+    }
 }
