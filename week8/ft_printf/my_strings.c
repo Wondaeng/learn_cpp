@@ -98,21 +98,61 @@ char* ptr_to_hex(void* ptr) {
     ASSERT(ptr != NULL);
 
     uintptr_t intptr = (uintptr_t)ptr;
-    char* hex_str = (char*)malloc(19);
+    char* hex_str = (char*)malloc(2 + sizeof(unsigned int) * 8 / 4 + 1);
 
-    int counter = 18;
-    hex_str[counter--] = '\0';
-
+    int counter = 0;
     while (intptr > 0) {  // 비어있는 자리를 0으로 채워야 하는가?
         char remainder = "0123456789abcdef"[intptr % 16];
         intptr = intptr / 16;
-        hex_str[counter--] = remainder;
+        hex_str[counter++] = remainder;
     }
 
-    hex_str[counter--] = 'x';
-    hex_str[counter--] = '0';
+    hex_str[counter] = 'x';
+    hex_str[counter + 1] = '0';
     
-    return &hex_str[counter + 1];  // 근데 이러면 나중에 malloc free를 못하는데? 다시 생각해보기
+    reverse(hex_str);
+
+    return hex_str;  // 근데 이러면 나중에 malloc free를 못하는데? 다시 생각해보기
+}
+
+
+char* uint_to_hex(unsigned int number) {
+
+    char* hex_str = (char*)malloc(2 + sizeof(unsigned int) * 8 / 4 + 1);  // "0x" + 16진수 최대 자릿수 + '\0'
+
+    int counter = 0;
+    while (number > 0) {  // 비어있는 자리를 0으로 채워야 하는가?
+        char remainder = "0123456789abcdef"[number % 16];
+        number = number / 16;
+        hex_str[counter++] = remainder;
+    }
+
+    hex_str[counter] = 'x';
+    hex_str[counter + 1] = '0';
+
+    reverse(hex_str);
+
+    return hex_str;
+}
+
+
+char* uint_to_hexcap(unsigned int number) {
+
+    char* hex_str = (char*)malloc(2 + sizeof(unsigned int) * 8 / 4 + 1);  // "0x" + 16진수 최대 자릿수 + '\0'
+
+    int counter = 0;
+    while (number > 0) {  // 비어있는 자리를 0으로 채워야 하는가?
+        char remainder = "0123456789ABCDEF"[number % 16];
+        number = number / 16;
+        hex_str[counter++] = remainder;
+    }
+
+    hex_str[counter] = 'x';
+    hex_str[counter + 1] = '0';
+
+    reverse(hex_str);
+
+    return hex_str;
 }
 
 
