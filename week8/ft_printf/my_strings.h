@@ -13,5 +13,7 @@ char* strncpy(char* dest, const char* src, size_t n);
 char* ptr_to_hex(void* ptr);
 char* int_to_str(int number);
 char* uint_to_str(unsigned int number);
+char* uint_to_hex(unsigned int number);
+char* uint_to_hexcap(unsigned int number);
 
 #endif
