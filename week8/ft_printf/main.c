@@ -38,7 +38,7 @@ int ft_printf(const char* format_str, ...) {
     int bytes = 0;
     size_t cs_len = strlen(format_str);
 
-    for (int i = 0; i < cs_len; i++) {
+    for (int i = 0; i < cs_len; i++) {  // i를 건드리므로 while로 바꾸는게 나아보임
         if (format_str[i] == '%') { 
             if (format_str[i + 1] == '\0') {
                 // undefined behavior (% at the end without conversion specifier)
@@ -132,3 +132,4 @@ int main()
 
     return 0;
 }
+
