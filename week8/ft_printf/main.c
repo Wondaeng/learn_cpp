@@ -73,18 +73,24 @@ int ft_printf(const char* format_str, ...) {
                 free(string);
                 
             }
-            //else if (format_str[i] == 'x') {
-
-            //}
-            //else if (format_str[i] == 'X') {
-
-            //}
+            else if (format_str[i] == 'x') {
+                unsigned int number = va_arg(ap, unsigned int);
+                char* string = uint_to_hex(number);
+                bytes += (int)write(1, string, strlen(string));
+                free(string);
+            }
+            else if (format_str[i] == 'X') {
+                unsigned int number = va_arg(ap, unsigned int);
+                char* string = uint_to_hexcap(number);
+                bytes += (int)write(1, string, strlen(string));
+                free(string);
+            }
             else if (format_str[i] == '%') {
                 bytes += (int)write(1, "%", 1);
             }
-            //else {
-            //    // undefined behavior (incorrect conversion specifier)
-            //}
+            else {
+                // undefined behavior (incorrect conversion specifier)
+            }
         }
         else {
             bytes += (int)write(1, &format_str[i], 1);
@@ -101,6 +107,7 @@ int main()
     char* word2 = "banana";
     int number1 = 42;
     int number2 = -42;
+    int number3 = 1234;
 
     // int (signed)
     int int_max = 2147483647;
@@ -112,14 +119,16 @@ int main()
     unsigned int uint_min = 0;
 
     ft_printf("%s and %s. The first character of each word is %c and %c.\n", word1, word2, word1[0], word2[0]);
-    ft_printf("The address of word1's first char is %p.\n", word1);
-    ft_printf("The address of word1 is %p.\n", &word1);
+    ft_printf("The address of %s's first char is %p.\n", word1, word1);
+    ft_printf("The address of %s is %p.\n", word1, &word1);
     ft_printf("I have %d %ss.\n", number1, word1);
     ft_printf("I have %i %ss.\n", number2, word2);
 
     ft_printf("The maximum value that int type can have is %d & minimum is %d.\n", int_max, int_min);
     ft_printf("The maximum value that uint type can have is %u & minimum is %u.\n", uint_max, uint_min);
     ft_printf("%u looks like zero, but it is the overflow of 4294967206.\n", uint_overflow);
+    ft_printf("Hex repr of %d is %x.\n", number1, number1);
+    ft_printf("Hex repr of %d is %X.\n", number1, number1);
 
     return 0;
 }
