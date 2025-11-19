@@ -1,4 +1,4 @@
-# 권오흠 교수님의 알고리즘 [제 1강](youtube.com/watch?v=ln7AfppN7mY&list=PL52K_8WQO5oUuH06MLOrah4h05TZ4n38l&index=1&pp=iAQB)
+# 권오흠 교수님의 알고리즘 [제 1~2강](youtube.com/watch?v=ln7AfppN7mY&list=PL52K_8WQO5oUuH06MLOrah4h05TZ4n38l&index=1&pp=iAQB)
 ## Recursion vs. Iteration
 
 - 모든 순환함수는 반복문(iteration)으로 변경 가능
