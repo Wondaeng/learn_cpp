@@ -53,12 +53,12 @@ e.g.,
 <Pseudo code 1>  
 powerSet(S):  
 if S is an empty set  
-    print nothing;  
+&nbsp;&nbsp;print nothing;  
 else  
-    let t be the first element of S;  
-    find all subsets of S - {t} by calling powerSet(S - {t});  
-    print the subsets;  
-    print the subsets with adding t;  
+&nbsp;&nbsp;let t be the first element of S;  
+&nbsp;&nbsp;find all subsets of S - {t} by calling powerSet(S - {t});  
+&nbsp;&nbsp;print the subsets;  
+&nbsp;&nbsp;print the subsets with adding t;  
 
 위 수도 코드의 몇가지 문제점들: return vs print
 - 결국 powerSet()이라는 함수가 모든 부분집합들을 구해서 **return을 해줘야 함**. 어떤 함수가 여러개의 집합을 return하게 만드는 것이 (가능은 하나) 간단하지 않음.
@@ -68,11 +68,11 @@ else
 <Pseudo code 2>  
 powerSet(P, S):  // S의 멱집합을 구한 후, 각각의 부분집합에 P를 합하여 출력  
 if S is an empty set  
-    print P;  
+&nbsp;&nbsp;print P;  
 else  
-    let t be the first element of S;  
-    powerSet(P, S - {t});  
-    powerset(P U {t}, S - {t});  
+&nbsp;&nbsp;let t be the first element of S;  
+&nbsp;&nbsp;powerSet(P, S - {t});  
+&nbsp;&nbsp;powerset(P U {t}, S - {t});  
   
 [실제 구현 코드](https://github.com/Wondaeng/learn_cpp/blob/main/algorithm/recursion/powerset.c)
 
