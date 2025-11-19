@@ -34,3 +34,53 @@
 
 **재귀에서 추가 인자(e.g., begin)가 필요한 경우는, 각 호출이 처리해야 할 데이터의 범위가 달라지는 경우다.**
 루프 버전에선 없었던 변수가 생기는 이유? 루프에선 지역변수를 이용해 변하는 상태를 계속 저장할 수 있지만, 재귀함수는 각 호출마다 프레임이 달라져서 인자로 전달해줘야함.
+
+
+## 멱집합 (powerset)
+멱집합: 어떤 집합의 모든 부분집합들을 원소로 가지는 집합
+($n$개의 원소를 가지는 집합의 모든 가능한 부분집합의 개수는 $2^n$)
+
+### Recursion을 이용하여 멱집합을 구하는 방법
+e.g., 
+1. ${a, b, c, d, e, f}$의 모든 부분집합을 나열하려면...
+- $a$를 제외한 ${b, c, d, e, f}$의 모든 부분집합들을 나열하고
+- ${b, c, d, e, f}$의 모든 부분집합에 ${a}$를 추가한 집합들을 나열한다
+
+2. ${b, c, d, e, f}$의 모든 부분집합에 ${a}를 추가한 집합들을 나열하려면...
+- ${c, d, e, f}$의 모든 부분집합들을 ${a}$를 추가한 집합들을 나열하고
+- ${c, d, e, f}$의 모든 부분집합에 ${a, b}$를 추가한 집합들을 나열한다
+
+<Pseudo code 1>
+powerSet(S):
+if S is an empty set
+    print nothing;
+else
+    let t be the first element of S;
+    find all subsets of S - {t} by calling powerSet(S - {t});
+    print the subsets;
+    print the subsets with adding t;
+
+위 수도 코드의 몇가지 문제점들: return vs print
+- 결국 powerSet()이라는 함수가 모든 부분집합들을 구해서 **return을 해줘야 함**. 어떤 함수가 여러개의 집합을 return하게 만드는 것이 (가능은 하나) 간단하지 않음.
+- 그렇다면, 현재 함수에서처럼 print로 끝날 것이 아니라 return을 하게끔 해야 함.
+- 우리의 목적은 멱집합의 출력이므로, 이렇게 될 경우 2^n개의 집합들을 저장해야 하며 이는 메모리 낭비가 될 수 있음.
+
+<Pseudo code 2>
+powerSet(P, S):  // S의 멱집합을 구한 후, 각각의 부분집합에 P를 합하여 출력
+if S is an empty set
+    print P;
+else
+    let t be the first element of S;
+    powerSet(P, S - {t});
+    powerset(P U {t}, S - {t});
+
+[실제 구현 코드](https://github.com/Wondaeng/learn_cpp/blob/main/algorithm/recursion/powerset.c)
+
+### 상태공간트리 (state space tree): 
+- 해를 찾기 위해 탐색할 필요가 있는 모든 후보들을 포함하는 트리
+- 트리의 모든 노드들을 방문하면 해를 찾을 수 있다.
+- 루트에서 출발하여 체계적으로 모든 노드를 방문하는 절차를 기술한다.
+
+e.g. k: 트리 상에서 나의 위치 (탐색 깊이), if (k==n): 만약 내 위치가 리프 노드라면, 
+include[k] = false, powerSet(k+1): 먼저 왼쪽으로 내려갔다가
+include[k] = true, powerSet(k+1): 다시 올라와서 오른쪽으로 내려가기 
