@@ -1,4 +1,4 @@
-#`%p`의 출력
+# `%p`의 출력
   
 ```
 #define _CRT_SECURE_NO_WARNINGS
