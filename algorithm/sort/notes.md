@@ -217,7 +217,12 @@ void merge(int data[], int p, int q, int r) {
 }
 ```
 
-시간복잡도 $T(n) = T(\frac{n}{2}) + T(\frac{n}{2}) + n OR 0 (if n = 1) = O(nlog{n})$
+시간복잡도 $$
+T(n) = \begin{cases}
+2T\left(\frac{n}{2}\right) + n & \text{if } n > 1 \\
+O(1) & \text{if } n = 1
+\end{cases} = O(n\log n)
+$$
 
 
 
