@@ -14,6 +14,7 @@
   - 맨 오른쪽 원소를 (루프의 탐색 범위에서) 제외한다  
 → 하나의 원소만 남을 때까지 위의 루프를 반복
 
+#### 선택 정렬 알고리즘즘
 ```
 selectionSort(A[], n)
 {
@@ -39,6 +40,8 @@ selectionSort(A[], n)
   - $i$번째 값을 $i+1$번째 값과 비교한다
   - $i$번째 값이 $i+1$번째 값보다 크다면 두 요소의 위치를 교환한다
   - 맨 오른쪽 원소를 (루프의 탐색 범위에서) 제외한다
+
+#### 버블 정렬 알고리즘
 
 ```
 bubbleSort(A[], n)
@@ -83,6 +86,7 @@ bubbleSort(A[], n)
 
 *값을 뒤로 한칸씩 밀어야하기 때문에 추가되는 요소가 지워지지 않도록 임시변수에 저장해야 함!*
 
+#### 삽입정렬 알고리즘
 ```
 insertionSort(A[], n)  // sort array A[1, ..., n]
 {
@@ -98,3 +102,122 @@ insertionSort(A[], n)  // sort array A[1, ..., n]
 → 최선의 경우(이미 정렬되어있는 경우)엔 $T(n) = 1 + 1 + \cdots + 1 = n - 1 = O(n)$
 
 약간의 오버헤드까지 고려하면 선택/버블 정렬보다 삽입 정렬이 좀 더 빠르다. 특히, 버블 정렬도 최선의 경우가 $O(n)$ 또는 $n-1$로 동일해보이지만, 버블 정렬은 추가로 교환이 발생했는지 체크(`!(swapped)`) 해야하거나 하는 등의 (아주 미미한) 오버헤드가 있긴 함.
+
+## 분할정복법
+- 분할: 해결하고자 하는 문제를 작은 크기의 *동일한* 문제들로 분할
+- 정복: 각각의 작은 문제를 *순환적*으로 해결
+- 합병: 작은 문제의 해를 *합하여*(merge) 원래 문제에 대한 해를 구함
+
+e.g., 합병정렬(merge sort)과 퀵정렬(quick sort)이 분할정복법(divide and conquer)에 해당 됨.
+
+### 합병정렬 (merge sort)
+- 데이터가 저장된 배열을 절반으로 나눔 (실제로 무슨 작업을 하는 건 아님)
+- 각각을 순환적으로 정렬 (재귀적으로 함수 호출)
+- 정렬된 두 개의 배열을 합쳐 전체를 정렬 (즉, 정렬을 합병 과정 중에 진행) <-- 실제 코딩을 할 필요가 있는 부분 
+```
+e.g., 배열 [5, 2, 4, 7]
+5 / 2 / 4 / 7
+2 5 / 4 7
+2 4 5 7
+```
+
+#### 두개의 정렬된 리스트를 하나의 정렬된 리스트로 합치는 법
+길이가 정렬된 두 배열의 길이의 합인 *추가배열*을 이용
+```
+e.g.,
+// 각각의 배열이 이미 정렬되어 있으므로
+// A 또는 H중 하나가 전체중에서 가장 작은 값이 됨 (A[i]와 A[j] 비교)
+A G L O R / H I M S T  
+i           j
+
+0 0 0 0 0 0 0 0 0 0
+k
+-----------------------
+A G L O R / H I M S T  
+  i         j
+
+A 0 0 0 0 0 0 0 0 0
+  k
+-----------------------
+A G L O R / H I M S T  
+    i       j
+
+A G 0 0 0 0 0 0 0 0
+    k
+-----------------------
+A G L O R / H I M S T  
+    i         j
+
+A G H 0 0 0 0 0 0 0
+      k
+-----------------------
+A G L O R / H I M S T  
+    i           j
+
+A G H I 0 0 0 0 0 0
+        k
+... (반복)
+```
+
+#### 합병 정렬 알고리즘
+
+```
+mergeSort(A[], p, r)  // 배열 A의 index p에서 r까지 데이터를 정렬
+{
+    if (p < r) then {
+        q <- (p + r) / 2;  // p, r의 중간 지점 계산
+        mergeSort(A, p, q);
+        mergeSort(A, q+1, r);
+        merge(A, p, q, r);
+    }
+}
+
+merge(A[], p, q, r)
+{
+    정렬되어 있는 두 배열 A[p ... q]와 A[q+1 ... r]을 합하여
+    정렬된 하나의 배열 A[p ... r]을 만든다.
+}
+```
+
+```
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+
+void merge(int data[], int p, int q, int r) {
+	int i = p;
+	int j = q + 1;
+	int k = 0;
+
+	int size = r - p + 1;
+	int* temp = (int*)malloc(size * sizeof(int));  // 주의: 매호출 malloc 하는 것은 매우 느림
+
+	while (i <= q && j <= r) {
+		if (data[i] <= data[j]) {
+			temp[k++] = data[i++];
+		}
+		else {
+			temp[k++] = data[j++];
+		}
+	}
+
+	while (i <= q) {
+		temp[k++] = data[i++];
+	}
+	while (j <= r) {
+		temp[k++] = data[j++];
+	}
+
+	for (int i = 0; i <= size; i++) {
+		data[p + i] = temp[i];
+	}
+	
+	free(temp);
+
+}
+```
+
+시간복잡도 $T(n) = T(\frac{n}{2}) + T(\frac{n}{2}) + n OR 0 (if n = 1) = O(nlog{n})$
+
+
+
