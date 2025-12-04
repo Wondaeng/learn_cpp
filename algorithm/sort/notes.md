@@ -306,8 +306,7 @@ $$
 
 $$
 \begin{aligned}
-T(n) = 2T(n/2) + \Theta(n) \\
-&= \Theta(n \log n)
+T(n) = 2T(n/2) + \Theta(n) = \Theta(n \log n)
 \end{aligned}
 $$
   
