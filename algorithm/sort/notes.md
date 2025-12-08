@@ -457,4 +457,4 @@ HEAPSORT(A)
 		heap_size <- heap_size - 1	\\ O(1)
 		MAX-HEAPIFY(A, 1)			\\ O(log_2(n))
 ```
-시간복잡도: $O(n\log{2}n)$
+시간복잡도: $O(n\log{2} n)$
