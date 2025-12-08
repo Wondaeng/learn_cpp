@@ -424,3 +424,37 @@ MAX-HEAPIFY(A, i)
 시간 복잡도: 어떠한 경우에도 트리의 높이 $h$보다 작거나 같음. heap은 complete binary tree이기 때문에 노드의 개수를 $n$이라고 했을 때, 시간 복잡도는 항상 $O(h)=\theta(\log{2}n)$이 됨. 
 
 
+#### 힙정렬 
+1. 정렬할 배열을 힙으로 만들기
+  - 주어진 배열 A를 complete binary tree로 해석함 (1차원 배열을 *개념적으로* 트리처럼 생각) - 아직 힙은 아님
+  - level order의 역순으로 (배열의 마지막 요소부터 처음 요소까지 거꾸로) 노드를 순회하여, leaf node가 아닌 노드들에 대하여:
+  	- 이 노드들을 root로 하는 subtree에 대해 생각: 왼쪽/오른쪽 자식 subtree가 heap인지 검사 후 (i.e., heapify 조건을 만족하는지 검사 - 자식 subtree들은 leaf node거나 이미 heapify를 거쳤을테니 사실 heap일 수 밖에 없음)
+  	- max-heapify 연산을 진행
+```
+buildMaxHeap(A)
+{
+	heap_size[A] <- length[A]  // length[A]: 정렬할 데이터의 개수, heap_size[A]: 힙의 노드의 개수
+	for i <- length[A]/2 downto 1  {  // length[A]/2 = n/2 = 첫 부모 노드의 index
+		do maxHeapify(A, i);
+	}
+}
+```
+시간복잡도: 러프하게 for loop이 $\frac{n}{2}$회 반복, 각 루프마다 maxHeapify의 시간복잡도가 $\log n$이므로 $O(n\log n)$. 그러나, maxHeapify의 시간복잡도가 $\log n$은 heapify의 대상이 되는 root 노드의 subtree의 노드의 개수가 $n$개일 때 기준임. 즉, 초반엔 한 두개의 노드에 대해서 heapify를 하고 마지막에서야 $\log n$의 복잡도의 heapify를 하므로 이는 실제 시간복잡도에 비해 over-estimated된 계산임. 이를 더 정확하게 분석해보면 놀랍게도 시간복잡도는 $O(n)$이 됨 (따로 검색). 다만, 이처럼 힙을 만드는 연산의 시간복잡도가 $O(n \log n)$이라 하더라도, 실제 힙정렬 알고리즘 전체의 시간복잡도에는 영향이 없음. 실제 정렬이 일어나는 다음 단계의 시간복잡도가 어차피 $O(n \log n)$이기 때문.    
+  
+**왜 이렇게 하는가?**  
+힙 구조가 정렬에 있어 이점이 있기 때문: heap property에 의해 부모가 자식노드들 보다 커야하므로 이미 데이터들간의 크기 관계가 어느정도 들어가 있고, 특히 최댓값이 어딨는지 알고 있음 (루트 노드).
+
+2. 힙에서 최댓값(루트)를 가장 마지막 값과 바꾼다.
+3. 힙의 크기가 $1$ 줄어든 것으로 간주한다. 즉, 가장 마지막 값은 힙의 일부가 아닌 것으로 간주한다.
+4. 루트 노드에 대해서 heapify(1) 한다.
+5. 2~4번을 반복한다.
+
+```
+HEAPSORT(A)
+	BUILD-MAX-HEAP(A)				\\ O(n)
+	for i <- heap_size downto 2 do	\\ n-1 times
+		exchange A[1] <-> A[i]		\\ O(1)
+		heap_size <- heap_size - 1	\\ O(1)
+		MAX-HEAPIFY(A, 1)			\\ O(log_2(n))
+```
+시간복잡도: $O(n\log(2)n)$
