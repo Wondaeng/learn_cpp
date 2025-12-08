@@ -345,3 +345,82 @@ $$A(n) = \frac{2}{n}\sum_{i=0}^{n-1} A(i) + \Theta(n) = \Theta(n\log_2 n)$$
   - 피벗을 랜덤하게 선택
   - no worst case instance, but worst case execution (이전의 두 방법의 경우엔 입력 데이터 - case - 에 따라 최악의 경우가 결정되는 반면, 랜덤의 경우 내가 주사위를 얼마나 잘 굴리냐 - execution - 에 따라 최악이 결정됨) 
   - 평균 시간복잡도 $O(n\log n)$
+
+
+### 힙 정렬 (heap sort)
+ - 최악의 경우 시간복잡도 $O(n \log{2}n)$ (합병정렬과 같음)
+ - Sorts in place: 추가 배열 불필요
+ - 이진 힙(binary heap) 자료구조를 사용
+
+#### Heap 이란?
+1. complete binary tree 이면서
+2. (min 혹은 max) heap property를 만족함  
+  
+#### Tree 
+계층적인 구조를 표현하는 비선형 자료구조 - 부모(parent)와 자식(child) 노드로 이루어짐.  
+부모가 없는 노드를 root 노드, 자식이 없는 노드를 leaf 노드라고 함.  
+
+- binary tree: 각 노드가 최대 2개의 자식 노드를 가지는 트리. 각각의 자식은 왼쪽 자식이냐 오른쪽 자식이냐가 정해져 있음 (설령 어떤 부모 노드의 자식 노드가 한개더라도 정해져있음).
+- full binary tree: 모든 레벨에 노드들이 꽉 차있는 형태
+- complete binary tree: 마지막 레벨을 제외하면 완전히 꽉 차있고, 가장 오른쪽부터 연속된 몇개의 노드가 비어있을 수 있음
+- max heap property: 부모는 항상 자식보다 크거나 같다
+- min heap property: 부모는 항상 자식보다 작거나 같다
+- 동일한 데이터를 가진 서로다른 힙이 존재함 - 즉, 힙은 유일하지 않음
+
+- 힙은 1차원 배열로 표현가능: A[1, ..., n]
+  - 루트 노드 A[1]
+  - A[i]의 부모 = A[i/2]
+  - A[i]의 왼쪽 자식 = A[2i]
+  - A[i]의 오른쪽 자식 = A[2i + 1]
+(왜 이렇게 되는 가는 [여기](https://www.quora.com/In-a-binary-heap-a-node-with-index-i-has-children-at-indices-2i+1-and-2i+2-when-the-array-is-0-indexed-How-is-this-relationship-derived)를 참조)
+
+--> Complete binary tree 이기 때문에 특정 인덱스의 앞이 꽉 차있어서 이처럼 배열로 표현이 가능 
+#### Tree의 기본 연산: max-heapify
+전제 조건: 
+1. 트리의 전체 모양은 complete binary tree
+2. 왼쪽 subtree (루트의 왼쪽 자식을 또다시 root로 하는 트리)는 그 자체로 heap이고
+3. 오른쪽 subtree도 그 자체로 heap인데
+4. 유일하게 루트만이 heap proterty를 만족 안하는 경우
+--> 이 트리 전체를 heap으로 만들어주는 연산을 max-heapify라 함
+
+과정:
+1. 두 자식들 중 더 큰 쪽이 나보다 크면 exchange 한다.
+2. 바꾸지 않았던 반대쪽 자식을 루트로 하는 subtree쪽은 문제가 될 게 없다 (두 자식을 비교해서 큰놈을 올렸기 때문에 heap property는 그대로 유지됨)
+3. 따라서 바꾼 쪽 자식을 루트로하는 subtree를 다시 살펴봐야 함
+4. exchange에 의해 heap 구조가 망가졌으므로 또다시 exchange가 필요해진다 (무조건 그런건 아니지만) 즉, 처음과 동일한 문제가 반복된다.
+5. 과정 1-4 반복...
+  
+```
+[1. Recursive version]
+// 힙 A의 특정 노드 i에 대해 MAX-HEAPIFY 연산을 하는 함수
+MAX-HEAPIFY(A, i)  // A: heap, i: heapify의 대상이 되는 노드
+{
+	if there is no child of A[i]  {  // 노드 i가 leaf node라면
+		return;
+	}
+	k <- index of the biggest child of i;
+	if A[i] >= A[k]  {  // 이미 i(부모)의 값이 k(자식)보다 크다면
+		return;
+	}
+	exchange A[i] and A[k];
+	MAX-HEAPIFY(A, k);  // k에 대해서 heapify를 진행 (recursion)
+}
+
+
+[2. Iterative version]
+MAX-HEAPIFY(A, i)
+{
+	while A[i] has a child  {
+		k <- index of the biggest child of i;
+		if A[i] >= A[k]  {
+			return;
+		}
+		exchange A[i] and A[k];
+		i = k;
+	}
+}
+```
+
+시간 복잡도: 어떠한 경우에도 트리의 높이 $h$보다 작거나 같음. heap은 complete binary tree이기 때문에 노드의 개수를 $n$이라고 했을 때, 시간 복잡도는 항상 $O(h)=\theta(\log{2}n)$이 됨. 
+
+
